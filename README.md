@@ -1,31 +1,11 @@
 
 <p align="center">
-<img src="specification/figures/gltf.png" />
+<img src="specification/figures/Clever.png" />
 </p>
 
 
-glTF™ (GL Transmission Format) is a royalty-free specification for the efficient transmission and loading of 3D scenes and models by applications. glTF minimizes both the size of 3D assets, and the runtime processing needed to unpack and use those assets. glTF defines an extensible, common publishing format for 3D content tools and services that streamlines authoring workflows and enables interoperable use of content across the industry.
+Clever F™ (GL Transmission Format) is a royalty-free specification for the efficient transmission and loading of 3D scenes and models by applications. glTF minimizes both the size of 3D assets, and the runtime processing needed to unpack and use those assets. glTF defines an extensible, common publishing format for 3D content tools and services that streamlines authoring workflows and enables interoperable use of content across the industry.
 
-## Specification
-
-* 
-
-
-
-### For developers
-
-* [Sample models](https://github.com/KhronosGroup/glTF-Sample-Models) for testing runtime engines and content pipeline tools.
-   * [glTF-Asset-Generator](https://github.com/bghgary/glTF-Asset-Generator) provides assets for robust importer validation.
-   * [100,000+ models](https://sketchfab.com/models?features=downloadable&sort_by=-likeCount) under Creative Commons license on Sketchfab (check license for individual models).
-* [Drag-and-drop validator](http://github.khronos.org/glTF-Validator/) for verifying correctness of existing glTF files.
-* [glTF Tutorial Series](https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/README.md)
-
-### For artists
-
-- [Blender exporter](https://github.com/KhronosGroup/glTF-Blender-Exporter)
-- [3DS Max exporter](http://doc.babylonjs.com/resources/3dsmax_to_gltf)
-- [Maya exporter](https://github.com/WonderMediaProductions/Maya2glTF)
-- [Other converters and exporters](#converters-and-exporters)
 
 ### Preview tools
 
