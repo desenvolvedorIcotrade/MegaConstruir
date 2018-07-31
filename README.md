@@ -7,7 +7,7 @@ Clever F™ (GL Transmission Format) is a royalty-free specification for the eff
 
 
   - [Sketchfab](https://sketchfab.com/)
-  - [BabylonJS Sandbox](https://www.babylonjs.com/sandbox/)
+  - [ Sandbox](http://www.babylonjs-playground.com/)
   - [Drag-and-drop viewer](https://gltf-viewer.donmccurdy.com/)
   - [glTF VSCode Extension](https://marketplace.visualstudio.com/items?itemName=cesium.gltf-vscode) 3D previews, glTF validation, conversion to/from GLB
 
