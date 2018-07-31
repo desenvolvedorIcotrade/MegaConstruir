@@ -1,4 +1,4 @@
-https://#
+
 <p align="center">
 <img src="specification/figures/gltf.png" />
 </p>
