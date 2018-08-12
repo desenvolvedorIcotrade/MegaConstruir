@@ -1,256 +1,432 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML>
 <HEAD>
-<META NAME="description" content="Cubus is a PC-Game, which is a part of the '7 by one stroke' package, translated from C++ into HTML and JavaScript">
+<META NAME="description" content="ColorLines is a PC-Game, which is a part of the '7 by one stroke' package, written in HTML and JavaScript">
 <META NAME="author" content="Lutz Tautenhahn">
-<META NAME="keywords" content="Game, Cubus, Streich, Stroke, JavaScript">
+<META NAME="keywords" content="Game, ColorLines, Streich, Stroke, JavaScript">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-<title>Cubus</title>
+<title>ColorLines</title>
 <script language="JavaScript">
-var i, j, k, IsOver, Max=3, Color=0, StartTime, EndTime;
-fld3d = new Array(Max);
-for (i=0; i < Max; i++)
-{ fld3d[i]  = new Array(Max);
+var i, j, IsOver, Size=10, dSize=1, NCol=6, NNext=3, Score=0, I_Sel, J_Sel, IsAni;
+
+Fld=new Array(Size);
+for (i=0; i<Size; i++)
+  Fld[i]=new Array(Size);
+
+Next=new Array(NNext);
+
+Pic=new Array(8);
+for (i=0; i<8; i++)
+{ Pic[i]=new Image();
+  Pic[i].src="ball"+i+"t.gif";
 }
-for (i=0; i < Max; i++)
-{ for (j=0; j < Max; j++)
-    fld3d[i][j] = new Array(Max);
+PicT=new Array(8);
+for (i=0; i<8; i++)
+{ PicT[i]=new Image();
+  PicT[i].src="ball"+i+".gif";
 }
-fld2d = new Array(2);
-for (i=0; i < 2; i++)
-{ fld2d[i]  = new Array(6);
-}
-for (i=0; i < 2; i++)
-{ for (j=0; j < 6; j++)
-    fld2d[i][j] = new Array(Max);
-}
-for (i=0; i < 6; i++)
-{ for (j=0; j < Max; j++)
-    fld2d[0][i][j] = new Array(Max);
-}
-for (i=0; i < 6; i++)
-{ for (j=0; j < Max; j++)
-    fld2d[1][i][j] = new Array(Max);
-}
-visible = new Array(6);
-for (i=0; i < 6; i++)
-{ visible[i]  = new Array(Max);
-}
-for (i=0; i < 6; i++)
-{ for (j=0; j < Max; j++)
-    visible[i][j] = new Array(Max);
+if (! document.layers)
+  PicT[0].src="transparent.gif";
+
+function SetColors(nn)
+{ NCol=nn; 
+  dSize=7-nn; 
+  Init();
 }
 
-Pic = new Array(5);
-for (i=0; i < 5; i++)
-{ Pic[i] = new Image(); 
-  Pic[i].src = "cubus"+eval(i)+".gif"; 
-} 
-
-function SetColor(cc)
-{ if (cc<0) Color=1-Color;
-  else Color=cc;
-  window.document.images[window.document.images.length-1].src = Pic[Max*Color].src;
+function random(nn)
+{ return(Math.round(Math.random()*1000)%nn);
 }
 
-function Clicked(ii, jj, kk)
-{ if (IsOver) return;
-  if (visible[ii][jj][kk]) return;
-  if (fld2d[0][ii][jj][kk]==Color)
-  { visible[ii][jj][kk]=true;
-    num_visible++;
-    RefreshPic(ii, jj, kk);
-    if (num_visible==Max*Max*6)
-    { IsOver=true;
-      Now = new Date();
-      EndTime = Now.getTime() / 1000;
-      i=Math.floor(EndTime - StartTime);
-      if (window.opener)
-      { if (window.opener.SetHighscores)
-          window.opener.SetHighscores("Cubus","",i,-1);
-      }
-      alert("Valeu, você resolveu este jogo em "+i+ " segundos !");
-    }
+function Init()
+{ var ii, jj;
+  for (ii=0; ii<Size; ii++)
+  { for (jj=0; jj<Size; jj++)
+    { Fld[ii][jj]=0;
+      document.images[jj*Size+ii].src=PicT[0].src;
+    }  
   }
-  else
-  { IsOver=true;
-    alert("Erro ! O jogo acabou !");
-  }  
-} 
-
-function Show()
-{ if ((IsOver)&&(num_visible==Max*Max*6))
-    alert("Tudo é certo !");
-  else
-  { for (i=0; i<6; i++)
-    { for (j=0; j<Max; j++)
-      { for (k=0; k<Max; k++)
-	  visible[i][j][k]=true;
-      }
-    }
-    RefreshScreen();
-    alert("Mostrar não é resolver !");
-    IsOver=true;
+  for (ii=dSize; ii<Size-dSize; ii++)
+  { for (jj=dSize; jj<Size-dSize; jj++)
+    { Fld[ii][jj]=0;
+      document.images[jj*Size+ii].src=Pic[0].src;
+    }  
   }
-}
-  
-function Scramble()
-{ for (i=0; i<Max; i++)
-  { for (j=0; j<Max; j++)
-    { for (k=0; k<Max; k++)
-	fld3d[i][j][k]=Math.round(Math.random()*100)%2;
-    }
-  }
-  for (i=0; i<Max; i++)
-  { for (j=0; j<Max; j++)
-    { fld2d[0][0][j][i]=fld3d[i][0][Max-1-j];
-      fld2d[0][1][j][i]=fld3d[0][j][Max-1-i];
-      fld2d[0][2][j][i]=fld3d[i][j][0];
-      fld2d[0][3][j][i]=fld3d[Max-1][j][i];
-      fld2d[0][4][j][i]=fld3d[i][Max-1][j];
-      fld2d[0][5][j][i]=fld3d[i][Max-1-j][Max-1];
-      fld2d[1][0][j][i]=0;
-      fld2d[1][1][j][i]=0;
-      fld2d[1][2][j][i]=0;
-      fld2d[1][3][j][i]=0;
-      fld2d[1][4][j][i]=0;
-      fld2d[1][5][j][i]=0;
-      for (k=0; k<Max; k++)
-      { fld2d[1][0][j][i]=fld2d[1][0][j][i]+fld3d[i][k][Max-1-j];
-	fld2d[1][1][j][i]=fld2d[1][1][j][i]+fld3d[k][j][Max-1-i];
-	fld2d[1][2][j][i]=fld2d[1][2][j][i]+fld3d[i][j][k];
-	fld2d[1][3][j][i]=fld2d[1][3][j][i]+fld3d[k][j][i];
-	fld2d[1][4][j][i]=fld2d[1][4][j][i]+fld3d[i][k][j];
-	fld2d[1][5][j][i]=fld2d[1][5][j][i]+fld3d[i][Max-1-j][k];
-      }
-    }
-  }
-  for (i=0; i<6; i++)
-  { for (j=0; j<Max; j++)
-    { for (k=0; k<Max; k++)
-	visible[i][j][k]=false;
-    }
-  }
-  num_visible=0;
+  GetNext();
+  PutNext();
+  GetNext();
+  I_Sel=-1;
   IsOver=false;
-  RefreshScreen();  
-  Now = new Date();
-  StartTime = Now.getTime() / 1000;
+  IsAni=false;
+  Score=0;
+  document.forms[0].Score.value=Score;
 }
 
-function RefreshPic(ii, jj, kk)
-{ window.document.images[ii*Max*Max+jj*Max+kk].src = Pic[Max*fld2d[0][ii][jj][kk]].src;
+function GetNext()
+{ var ii;
+  for (ii=0; ii<NNext; ii++)
+  { Next[ii]=1+random(NCol);
+    document.images[Size*Size+ii].src=Pic[Next[ii]].src;
+  }
 }
 
-function RefreshScreen()
-{ for (l=0; l < 2; l++)
-  { for (i=0; i < 6; i++)
-    { for (j=0; j<Max; j++)
-      { for (k=0; k<Max; k++)
-	{ if (l==0)
-          { if ((IsOver)||(visible[i][j][k]))
-              window.document.images[i*Max*Max+j*Max+k].src = Pic[Max*fld2d[0][i][j][k]].src;
-            else
-              window.document.images[i*Max*Max+j*Max+k].src = Pic[4].src;
-          }
-          else
-            window.document.images[6*Max*Max+i*Max*Max+j*Max+k].src = Pic[fld2d[1][i][j][k]].src;
+function PutNext()
+{ var ii, jj, kk, nn, rr;
+  for (kk=0; kk<NNext; kk++)  
+  { nn=0;
+    for (ii=dSize; ii<Size-dSize; ii++)
+    { for (jj=dSize; jj<Size-dSize; jj++)
+      { if (Fld[ii][jj]==0) nn++;
+      }
+    }
+    if (nn==0)
+    { if (window.opener)
+      { if (window.opener.SetHighscores)
+        { if (dSize==1) window.opener.SetHighscores("ColorLines","easy",Score,1);
+          else window.opener.SetHighscores("ColorLines","hard",Score,1);
+        }
+      }
+      alert("Valeu, você tem "+Score+" pontos !");
+      IsOver=true;
+      return;
+    }
+    rr=random(nn)+1;
+    nn=0;
+    for (ii=dSize; ii<Size-dSize; ii++)
+    { for (jj=dSize; jj<Size-dSize; jj++)
+      { if (Fld[ii][jj]==0) nn++;
+        if (nn==rr)
+        { Fld[ii][jj]=Next[kk];
+          document.images[jj*Size+ii].src=Pic[Next[kk]].src;
+          nn++;
+          RemoveTest(ii, jj);
         }
       }
     }
   }
+  nn=0;
+  for (ii=dSize; ii<Size-dSize; ii++)
+  { for (jj=dSize; jj<Size-dSize; jj++)
+    { if (Fld[ii][jj]==0) nn++;
+    }
+  }
+  if (nn==0)
+  { if (window.opener)
+    { if (window.opener.SetHighscores)
+      { if (dSize==1) window.opener.SetHighscores("ColorLines","easy",Score,1);
+        else window.opener.SetHighscores("ColorLines","hard",Score,1);
+      }
+    }
+    alert("Valeu, você tem "+Score+" pontos !");
+    IsOver=true;
+  }
+}
+
+function Clicked(ii, jj)
+{ var nn, mm;
+  if (IsOver) return;
+  if (IsAni) return;
+  if ((ii<dSize)||(ii>Size-dSize-1)||(jj<dSize)||(jj>Size-dSize-1)) return;
+  if (I_Sel==-1)
+  { if (Fld[ii][jj]>0)
+    { I_Sel=ii;
+      J_Sel=jj;
+      document.images[jj*Size+ii].src=PicT[Fld[ii][jj]].src;
+    }
+    return;
+  }
+  if (Fld[ii][jj]>0)
+  { document.images[J_Sel*Size+I_Sel].src=Pic[Fld[I_Sel][J_Sel]].src;
+    I_Sel=ii;
+    J_Sel=jj;
+    document.images[jj*Size+ii].src=PicT[Fld[ii][jj]].src;
+    return;
+  }
+  if (GetMoveLine(ii, jj, 1))
+  { isAni=true;
+    MoveAni(I_Sel, J_Sel);
+  }
+  else
+  { for (nn=0; nn<Size; nn++)
+    { for (mm=0; mm<Size; mm++)
+      { if (Fld[nn][mm]<0) 
+          Fld[nn][mm]=0;
+      }
+    }
+  }
+} 
+
+function MoveAni(ii, jj)
+{ var nn, mm, vv, vv_best=-1000;
+  if (Fld[ii][jj]==-1)
+  { for (nn=0; nn<Size; nn++)
+    { for (mm=0; mm<Size; mm++)
+      { if (Fld[nn][mm]<0) 
+          Fld[nn][mm]=0;
+      }
+    }
+    Fld[ii][jj]=Fld[I_Sel][J_Sel];
+    Fld[I_Sel][J_Sel]=0;
+    vv=RemoveTest(ii, jj);
+    IsAni=false;
+    if (vv==0)
+    { PutNext();
+      GetNext();
+    }  
+    I_Sel=-1; 
+    return;
+  }
+  if (ii>0) 
+  { vv=Fld[ii-1][jj];
+    if ((vv<0)&&(vv>vv_best)) vv_best=vv;
+  }
+  if (ii<Size-1) 
+  { vv=Fld[ii+1][jj];
+    if ((vv<0)&&(vv>vv_best)) vv_best=vv;
+  }
+  if (jj>0) 
+  { vv=Fld[ii][jj-1];
+    if ((vv<0)&&(vv>vv_best)) vv_best=vv;
+  }
+  if (jj<Size-1) 
+  { vv=Fld[ii][jj+1];
+    if ((vv<0)&&(vv>vv_best)) vv_best=vv;
+  }
+
+  if (ii>0) 
+  { vv=Fld[ii-1][jj];
+    if (vv==vv_best)
+    { document.images[jj*Size+ii].src=Pic[0].src;
+      document.images[jj*Size+(ii-1)].src=Pic[Fld[I_Sel][J_Sel]].src;
+      setTimeout("MoveAni("+eval(ii-1)+","+jj+")",100);
+      return;
+    }
+  }
+  if (ii<Size-1) 
+  { vv=Fld[ii+1][jj];
+    if (vv==vv_best)
+    { document.images[jj*Size+ii].src=Pic[0].src;
+      document.images[jj*Size+(ii+1)].src=Pic[Fld[I_Sel][J_Sel]].src;
+      setTimeout("MoveAni("+eval(ii+1)+","+jj+")",100);
+      return;
+    }
+  }
+  if (jj>0) 
+  { vv=Fld[ii][jj-1];
+    if (vv==vv_best)
+    { document.images[jj*Size+ii].src=Pic[0].src;
+      document.images[(jj-1)*Size+ii].src=Pic[Fld[I_Sel][J_Sel]].src;
+      setTimeout("MoveAni("+ii+","+eval(jj-1)+")",100);
+      return;
+    }
+  }
+  if (jj<Size-1) 
+  { vv=Fld[ii][jj+1];
+    if (vv==vv_best)
+    { document.images[jj*Size+ii].src=Pic[0].src;
+      document.images[(jj+1)*Size+ii].src=Pic[Fld[I_Sel][J_Sel]].src;
+      setTimeout("MoveAni("+ii+","+eval(jj+1)+")",100);
+      return;
+    }
+  }
+}
+
+function GetMoveLine(ii, jj, nn)
+{ if ((ii==I_Sel)&&(jj==J_Sel)) return(true);
+  var vv=Fld[ii][jj];
+  if (vv>0) return(false);
+  if ((vv<0)&&(-nn<=vv)) return(0);
+  vv=false;
+  Fld[ii][jj]=-nn;
+  if (ii>dSize) { if (GetMoveLine(ii-1, jj, nn+1)) vv=true; }
+  if (ii<Size-1-dSize) { if (GetMoveLine(ii+1, jj, nn+1)) vv=true; }
+  if (jj>dSize) { if (GetMoveLine(ii, jj-1, nn+1)) vv=true; }
+  if (jj<Size-1-dSize) { if (GetMoveLine(ii, jj+1, nn+1)) vv=true; }
+  return(vv);
+}
+
+function GetFld(ii, jj)
+{ if (ii<dSize) return(0);
+  if (ii>=Size-dSize) return(0);
+  if (jj<dSize) return(0);
+  if (jj>=Size-dSize) return(0);
+  return(Fld[ii][jj]);
+}
+
+function RemoveTest(ii, jj)
+{ var ll, ss=0, ccount, ccol=Fld[ii][jj];
+  ccount=1;
+  ll=0;
+  while (GetFld(ii+ll+1, jj)==ccol)
+  { ll++;
+    ccount++;
+  }
+  ll=0;
+  while (GetFld(ii-ll-1, jj)==ccol)
+  { ll++;
+    ccount++;
+  }
+  if (ccount>=5)
+  { Fld[ii][jj]=0;
+    document.images[jj*Size+ii].src=Pic[0].src;
+    ll=0;
+    while (GetFld(ii+ll+1, jj)==ccol)
+    { Fld[ii+ll+1][jj]=0;
+      document.images[jj*Size+ii+ll+1].src=Pic[0].src;
+      ll++;
+    }
+    ll=0;
+    while (GetFld(ii-ll-1, jj)==ccol)
+    { Fld[ii-ll-1][jj]=0;
+      document.images[jj*Size+ii-ll-1].src=Pic[0].src;
+      ll++;
+    }
+    ss+=ccount; 
+  }
+  
+  ccount=1;
+  ll=0;
+  while (GetFld(ii+ll+1, jj+ll+1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  ll=0;
+  while (GetFld(ii-ll-1, jj-ll-1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  if (ccount>=5)
+  { Fld[ii][jj]=0;
+    document.images[jj*Size+ii].src=Pic[0].src;
+    ll=0;
+    while (GetFld(ii+ll+1, jj+ll+1)==ccol)
+    { Fld[ii+ll+1][jj+ll+1]=0;
+      document.images[(jj+ll+1)*Size+ii+ll+1].src=Pic[0].src;
+      ll++;
+    }
+    ll=0;
+    while (GetFld(ii-ll-1, jj-ll-1)==ccol)
+    { Fld[ii-ll-1][jj-ll-1]=0;
+      document.images[(jj-ll-1)*Size+ii-ll-1].src=Pic[0].src;
+      ll++;
+    }
+    ss+=ccount; 
+  }
+
+  ccount=1;
+  ll=0;
+  while (GetFld(ii, jj+ll+1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  ll=0;
+  while (GetFld(ii, jj-ll-1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  if (ccount>=5)
+  { Fld[ii][jj]=0;
+    document.images[jj*Size+ii].src=Pic[0].src;
+    ll=0;
+    while (GetFld(ii, jj+ll+1)==ccol)
+    { Fld[ii][jj+ll+1]=0;
+      document.images[(jj+ll+1)*Size+ii].src=Pic[0].src;
+      ll++;
+    }
+    ll=0;
+    while (GetFld(ii, jj-ll-1)==ccol)
+    { Fld[ii][jj-ll-1]=0;
+      document.images[(jj-ll-1)*Size+ii].src=Pic[0].src;
+      ll++;
+    }
+    ss+=ccount; 
+  }
+
+  ccount=1;
+  ll=0;
+  while (GetFld(ii+ll+1, jj-ll-1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  ll=0;
+  while (GetFld(ii-ll-1, jj+ll+1)==ccol)
+  { ll++;
+    ccount++;
+  }
+  if (ccount>=5)
+  { Fld[ii][jj]=0;
+    document.images[jj*Size+ii].src=Pic[0].src;
+    ll=0;
+    while (GetFld(ii+ll+1, jj-ll-1)==ccol)
+    { Fld[ii+ll+1][jj-ll-1]=0;
+      document.images[(jj-ll-1)*Size+ii+ll+1].src=Pic[0].src;
+      ll++;
+    }
+    ll=0;
+    while (GetFld(ii-ll-1, jj+ll+1)==ccol)
+    { Fld[ii-ll-1][jj+ll+1]=0;
+      document.images[(jj+ll+1)*Size+ii-ll-1].src=Pic[0].src;
+      ll++;
+    }
+    ss+=ccount; 
+  }
+  Score+=ss;
+  document.forms[0].Score.value=Score;
+  return(ss);
 }
 
 function Help()
-{ alert("Há a vista de um cubo que consista em 27 (3x3x3) cubos"+
-      "\npequenos. Cada um deles é preto ou branco (escuro ou claro)."+
-      "\nOs cubos são semi-transparente: Se você olhar numa posição"+ 
-      "\nonde todos os cubos são brancos, este lugar parece branco;"+
-      "\ncubos brancos e pretos juntos parecem cinza e uma posição"+ 
-      "\nonde todos os cubos são preto, este lugar parece preto. A"+
-      "\nvista (de todos os 6 lados) do cubo grande é indicada no lado"+
-      "\ndireito. Sua tarefa é descobrir as cores dos cubos pequenos."+ 
-      "\nEscolher primeiramente uma cor estalando na tecla"+
-      "\n\"preto <--> branco\" e em seguida esse estala sobre os"+
-      "\nquadrados que (você pensa) tem a mesma cor. Se você"+
-      "\nfizer um erro então o jogo termina. O jogo é resolvido quando"+
-      "\nas cores de todos quadrados são encontradas. Boa sorte!");
+{ alert("Conecte 5 ou mais esferas da mesma cor a uma linha"+
+      "\nhorizontal, vertical ou diagonal. Primeirmente estale"+
+      "\nsobre uma esfera e depois sobre o destino novo."+ 
+      "\nBoa sorte!");
 }
 </script>
 </head>
-<BODY bgcolor=#008080>
+<BODY bgcolor=#DDBB88>
 <form>
 <DIV ALIGN=center>
-<table border cellpadding=20 cellspacing=0 bgcolor=#CCCCFF><tr align=center>
+<table noborder><tr><td colspan=3 align=center>
 <script language="JavaScript">
 document.open("text/plain");
-for (l=0; l<2; l++)
-{ document.writeln("<td><table noborder cellpadding=0 cellspacing=0>");
-    document.writeln("<tr align=center><td></td><td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(0, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td><td></td></tr>");
-    document.writeln("<tr align=center><td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(1, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td>");
-    document.writeln("<td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(2, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td>");
-    document.writeln("<td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(3, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td></tr>");
-    document.writeln("<tr align=center><td></td><td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(4, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td><td></td></tr>");
-    document.writeln("<tr align=center><td></td><td><table border cellpadding=0 cellspacing=0>");
-      for (i=0; i < Max; i++)
-      { document.writeln("<tr align=center>");
-        for (j=0; j < Max; j++)
-          document.writeln("<td><IMG src=\"cubus4.gif\" border=0 onMouseDown=\"Clicked(5, "+i+", "+j+")\"></td>");
-        document.writeln("</tr>");
-      }
-    document.writeln("</table></td><td></td></tr>");
-  document.writeln("</table></td>");
+document.writeln("<table border=4 cellpadding=0 cellspacing=1 bgcolor=#cccccc>");
+for (j=0; j<Size; j++)
+{ document.writeln("<tr align=center>");
+  for (i=0; i<Size; i++)
+    document.writeln("<td><IMG src=\"ball0.gif\" border=0 onMouseDown=\"Clicked("+i+","+j+")\"></td>");
+  document.writeln("</tr>");
 }
+document.writeln("</table>");
 document.close();
 </script>
+</td></tr>
+<tr><td align=center width=33%>
+<table noborder>
+<tr><td align=center><b>PONTOS:</b></td></tr>
+<tr><td align=center><input type=button value="&nbsp;&nbsp;&nbsp;&nbsp;" style="width:36;background-color:#FFFFFF;font-weight:bold" disabled name="Score"></td></tr>
+</table>
+</td><td align=center width=34%>
+<table border=4 cellpadding=0 cellspacing=0 bgcolor=#cccccc><tr>
+<td align=center><nobr><b>Em Seguida:</b><br><img src="ball0.gif" border=0><img src="ball0.gif" border=0><img src="ball0.gif" border=0></td>
 </tr></table>
-<br>
-<table noborder width=590>
-  <tr><td align=center><input type=button value="MOSTRA" width=124 style="width:124" onClick="javascript:Show()"></td>
-      <td align=center><input type=button value="preto<=> branco" width=134 style="width:134" onClick="javascript:SetColor(-1)"></td>
-      <td align=center><table border cellpadding=0 cellspacing=0><tr><td><IMG src="cubus0.gif" border=0 onMouseDown="SetColor(-1)"></td></tr></table></td>
-      <td align=center><input type=button value="NOVO JOGO" width=134 style="width:134" onClick="javascript:Scramble()"></td>
-      <td align=center><input type=button value="AJUDA" width=124 style="width:124" onClick="javascript:Help()"></td>
-  </tr>
+</td><td align=center width=33%>
+<table noborder>
+<tr><td align=center><b>CORES:</b></td></tr>
+<tr><td align=center>
+<SELECT onChange="SetColors(this.options[selectedIndex].value)" SIZE=1>
+<OPTION VALUE=6>6 - Fácil
+<OPTION VALUE=7>7 - Difícil
+</SELECT>
+</td></tr></table>
+</td></tr></table>
+<table noborder>
+<tr><td><input type=button value="Novo Jogo" width=120 style="width:120" onClick="javascript:Init()"></td>
+    <td><input type=button value="Ajuda" width=80 style="width:80" onClick="javascript:Help()"></td></tr>
 </table>
 </DIV>
 </form>
 <script language="JavaScript">
-  Scramble();
+  Init();
 </script>
 </BODY>
 </HTML>
