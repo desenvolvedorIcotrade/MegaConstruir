@@ -18,15 +18,15 @@ Next=new Array(NNext);
 Pic=new Array(8);
 for (i=0; i<8; i++)
 { Pic[i]=new Image();
-  Pic[i].src="ball"+i+"t.gif";
+  Pic[i].src="ball"+i+".";
 }
 PicT=new Array(8);
 for (i=0; i<8; i++)
 { PicT[i]=new Image();
-  PicT[i].src="ball"+i+".gif";
+  PicT[i].src="ball"+i+".";
 }
 if (! document.layers)
-  PicT[0].src="transparent.gif";
+  PicT[0].src="transparent";
 
 function SetColors(nn)
 { NCol=nn; 
@@ -393,23 +393,23 @@ document.writeln("<table border=4 cellpadding=0 cellspacing=1 bgcolor=#cccccc>")
 for (j=0; j<Size; j++)
 { document.writeln("<tr align=center>");
   for (i=0; i<Size; i++)
-    document.writeln("<td><IMG src=\"ball0.gif\" border=0 onMouseDown=\"Clicked("+i+","+j+")\"></td>");
+    document.writeln("<td><IMG src=\"ball0.\" border=0 onMouseDown=\"Clicked("+i+","+j+")\"></td>");
   document.writeln("</tr>");
 }
 document.writeln("</table>");
 document.close();
 </script>
 </td></tr>
-<tr><td align=center width=83%>
+<tr><td align=center width=830%>
 <table noborder>
 <tr><td align=center><b>PONTOS:</b></td></tr>
 <tr><td align=center><input type=button value="&nbsp;&nbsp;&nbsp;&nbsp;" style="width:36;background-color:#FFFFFF;font-weight:bold" disabled name="Score"></td></tr>
 </table>
-</td><td align=center width=84%>
+</td><td align=center width=840%>
 <table border=4 cellpadding=0 cellspacing=0 bgcolor=#cccccc><tr>
-<td align=center><nobr><b>Em Seguida:</b><br><img src="ball0.gif" border=0><img src="ball0.gif" border=0><img src="ball0.gif" border=0></td>
+<td align=center><nobr><b>Em Seguida:</b><br><img src="ball0." border=0><img src="ball0." border=0><img src="ball0." border=0></td>
 </tr></table>
-</td><td align=center width=83%>
+</td><td align=center width=830%>
 <table noborder>
 <tr><td align=center><b>CORES:</b></td></tr>
 <tr><td align=center>
